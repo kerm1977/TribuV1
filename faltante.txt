@@ -1,0 +1,15 @@
+crear un dashboard para administrar esto
+
+Administrar el tiempo de short polling
+Gestionar roles de usuario, editar borrar, etc
+Ocultar botones como chat, email
+Temas de interfaz
+Crear widgets area
+
+
+
+Olividó contraseña
+
+evitar sobreescritura de la app cuando se crea una nueva app
+
+Respaldar la base de datos en .db y en json

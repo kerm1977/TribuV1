@@ -1,0 +1,190 @@
+Para compilar un proyecto
+
+Ingresar a la capeta android desde la teminal
+y ecribir:
+construir.bat
+
+En caso de necesita probar la app antes de compilarla ir a la caperte desde la terminal
+miapp/www
+npx http-server
+http://127.0.0.1:8080
+
+
+ESTRUCTURA
+
+
+
+plantilla/
+├── .gitignore
+├── android/                        <-- Código nativo de Android
+│   ├── .gitignore
+│   ├── .gradle/
+│   ├── .idea/
+│   ├── app/
+│   ├── build/
+│   ├── build.gradle
+│   ├── BuilderGUI.ps1              <-- Script de automatización (PowerShell)
+│   ├── capacitor-cordova-android-plugins/
+│   ├── capacitor.settings.gradle
+│   ├── construir.bat               <-- Script de construcción (Windows Batch)
+│   ├── gradle/
+│   ├── gradle.properties
+│   ├── gradlew
+│   ├── gradlew.bat
+│   ├── local.properties
+│   ├── settings.gradle
+│   └── variables.gradle
+├── apks/                           <-- Carpeta probable para salida de compilación
+├── capacitor.config.json           <-- Configuración principal de Capacitor
+├── node_modules/                   <-- Dependencias de Node.js
+├── nota.txt
+├── package-lock.json
+├── package.json                    <-- Configuración del proyecto NPM
+├── README.md
+└── www/                            <-- Archivos web (HTML/CSS/JS)
+    ├── css/
+    │   └── bootstrap.css
+    └── js/                         <-- (Carpeta vacía)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    NO VOLVER A TOCAR ESTA RUTA Y LA VERSION QUE UTILIZO ES:
+
+Ruta: C:\Program Files\Microsoft\jdk-17.0.17.10-hotspot
+Versión: openjdk version "17.0.17" 2025-10-21 LTS
+
+===============================================================
+
+INSTRUCCIONES DEFINITIVAS PARA FORZAR JAVA 17
+(Corrección para Error "Toolchain languageVersion=21")
+
+Tienes 3 archivos que editar en la carpeta android. Hazlo en este orden:
+
+PASO 1: android/gradle.properties
+
+Abre android/gradle.properties y asegúrate de que NO exista ninguna otra línea org.gradle.java.home. Borra las viejas si hay y pon SOLO esta al final:
+
+org.gradle.java.home=C:\Program Files\Microsoft\jdk-17.0.17.10-hotspot
+
+PASO 2: android/variables.gradle
+
+Abre android/variables.gradle. Busca javaVersion. Si dice 21, cámbialo a 17. Si no existe, agrégalo dentro del bloque ext:
+
+ext {
+minSdkVersion = 22
+compileSdkVersion = 34
+// ... otras variables ...
+javaVersion = 17
+}
+
+PASO 3: android/app/build.gradle (EL IMPORTANTE)
+
+Abre android/app/build.gradle. Tienes que hacer 2 cambios aquí para "matar" la petición de Java 21.
+
+Cambio A: Sección compileOptions
+Busca compileOptions y asegúrate de que use VERSION_17:
+
+compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+}
+
+
+Cambio B: Forzar Toolchain (Agrégalo si no existe)
+Justo debajo de compileOptions, agrega (o modifica) este bloque java para forzar a Gradle a usar tu versión 17 instalada y no buscar la 21:
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+
+PASO 4: Limpiar y Reconstruir
+
+Una vez guardados los cambios, ejecuta estos comandos en tu terminal (en la carpeta del proyecto):
+
+cd android
+gradlew clean
+cd ..
+construir.bat
+
+
+
+
+errores con version java 17
+Regresa a la raíz del proyecto:
+PowerShell
+
+cd ..
+
+(Debes estar en C:\Users\MINIOS\Desktop\TRIBUPLAY)
+
+Instala TODO en versión 6 (Núcleo + Android + Plugins): Esto arregla el conflicto de versiones y asegura compatibilidad con Java 17.
+PowerShell
+
+
+
+Instalar cualquiera de estas 2
+
+npm install -D tailwindcss@3 --legacy-peer-deps
+npm install @capacitor/core@6 @capacitor/android@6 @capacitor/ios@6 @capacitor/filesystem@6 @capacitor/share@6 --save-exact --legacy-peer-deps
+
+
+
+
+Sincroniza Capacitor:
+PowerShell
+
+npx cap sync
+
+Limpia y construye el APK:
+PowerShell
+
+cd android
+gradlew clean
+construir.bat
+
+
+
+
+ahora abrir cada carpeta
+node configurar_proyecto.js
+
+1. Nombre de la nueva App (Ej: Altair Pro): xxxxxxx
+2. ID de la App (Ej: com.xxxxxxx.app) [Enter para default]: com.xxxxxxx.app
+3. Breve descripción: xxxxxxx
+
+⏳ Aplicando cambios en archivos locales...
+  [✔] capacitor.config.json -> App: xxxxxxx
+  [✔] api_db.js              -> Encontrado en: www\js\api_db.js
+  [✔] URL actualizada        -> https://kenth1977.pythonanywhere.com/api/xxxxxxx
+  [✔] package.json            -> Nombre: xxxxxxx
+
+======================================================
+✨ ¡CONFIGURACIÓN COMPLETADA!
+� Tu App ahora apunta a la base de datos: xxxxxxx.db
+
+PROXIMOS PASOS:
+1. Visita: https://kenth1977.pythonanywhere.com/api/xxxxxxx/crear_ahora   <-- pegar esto en el navegador para crear la db                                                                            Pythonanywhere
+2. Verifica que el mensaje diga "status: ok"
+3. Abre tu App local con 'npx http-server' y ¡listo!
+======================================================
+
+
+
+
+para actualizar
+npm install @capgo/capacitor-updater --legacy-peer-deps
+npx cap sync

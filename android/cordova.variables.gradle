@@ -1,0 +1,4 @@
+// Cordova Variables for Capacitor 
+ext.cordovaVariables = [ 
+// Add your Cordova variables here if needed 
+] 

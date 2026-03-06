@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ffffff">
+    <title>La Tribu</title>
+    
+    <!-- Bootstrap CSS Local -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+  
+</head>
+
+<body class="bg-light m-0 p-0 overflow-hidden vh-100 d-flex flex-column">
+
+    <!-- BOTÓN GLOBAL DE VOLVER ATRÁS -->
+    <button id="global-back-btn" class="global-floating-btn" onclick="window.goBack()">
+        <i class="bi bi-arrow-left fs-4 text-dark"></i>
+    </button>
+
+
+    <!-- BOTÓN GLOBAL DE CERRAR SESIÓN (Oculto permanentemente para no romper el JS) -->
+    <button id="global-logout-btn" style="display: none !important;" onclick="cerrarSesion()">
+        <i class="bi bi-box-arrow-right fs-4 text-danger"></i>
+    </button>
+
+    <!-- Botón Flotante para Agregar Nuevo Acceso (Solo visible en Home) -->
+    <button id="fab-add-acceso" class="btn btn-primary rounded-circle position-fixed shadow hidden-forced" 
+            style="bottom: 90px; right: 20px; z-index: 1000; width: 60px; height: 60px;"
+            data-bs-toggle="modal" data-bs-target="#modalNuevoAcceso">
+        <i class="bi bi-plus text-white" style="font-size: 2rem; line-height: 1;"></i>
+    </button>
+
+    <!-- Botón Flotante para el Chat -->
+    <button id="btn-chat-flotante" class="btn btn-warning rounded-circle hidden-forced" onclick="window.abrirModalChat()">
+        <i class="bi bi-chat-dots-fill text-dark" style="font-size: 1.8rem;"></i>
+        <!-- Globo de notificación (Punto rojo) -->
+        <span id="chat-badge" class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle d-none">
+            <span class="visually-hidden">Nuevos mensajes</span>
+        </span>
+    </button>
+
+    <!-- Contenedor Principal Dinámico (SPA) -->
+    <main id="app-content" class="flex-grow-1 overflow-auto h-100 w-100 position-relative">
+        
+        <!-- Hero Section Principal -->
+        <div class="container-fluid p-0">
+            <div class="position-relative">
+                <!-- Hero Background con Gradiente -->
+                <div class="hero-section bg-gradient-primary text-white p-3 text-center position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
+                        <div class="hero-pattern"></div>
+                    </div>
+                    <div class="position-relative z-1">
+                        <h1 class="h3 fw-bold mb-2 animate-fade-in">La Tribu</h1>
+                        <p class="small mb-3 animate-slide-up">Administrado De La Tribu de Los Libres</p>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <button class="btn btn-outline-light btn-lg rounded-pill px-4 border-2 hover-lift" onclick="accessManager.abrirModalCrear()">
+                                <i class="bi bi-plus-circle me-2"></i>Crear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Accesos Rápidos -->
+        <div class="container py-2">
+            <h2 class="text-center fw-bold mb-2">Accesos Rápidos</h2>
+            <div class="row g-3 justify-content-center">
+                <div class="col-6 col-md-3">
+                    <div class="quick-access-card text-center p-4 rounded-3 bg-white shadow-sm hover-lift cursor-pointer" data-view="Calendario">
+                        <i class="bi bi-calendar-check-fill text-warning fs-3 mb-2"></i>
+                        <p class="small fw-bold mb-0">Calendario</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="quick-access-card text-center p-4 rounded-3 bg-white shadow-sm hover-lift cursor-pointer" data-view="Pagos">
+                        <i class="bi bi-credit-card-fill text-info fs-3 mb-2"></i>
+                        <p class="small fw-bold mb-0">Pagos</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="quick-access-card text-center p-4 rounded-3 bg-white shadow-sm hover-lift cursor-pointer" data-view="Instrucciones">
+                        <i class="bi bi-info-circle-fill text-primary fs-3 mb-2"></i>
+                        <p class="small fw-bold mb-0">Instrucciones</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Barra de Navegación Inferior (Ahora es dinámica) -->
+    <nav id="bottom-navigation" class="bottom-nav hidden-forced position-fixed bottom-0 w-100 d-flex justify-content-around align-items-center py-2">
+        <!-- Se genera desde JavaScript mediante renderNavBar() -->
+    </nav>
+
+    <!-- ================================================================= -->
+    <!-- MODAL DE ACCESOS DIRECTOS -->
+    <!-- ================================================================= -->
+    <div class="modal fade" id="modalNuevoAcceso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Nuevo Acceso Directo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-nuevo-acceso">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small">Nombre de la Vista</label>
+                            <input type="text" class="form-control rounded-3" id="acc-nombre" placeholder="Ej. Finanzas Personales" required>
+                        </div>
+                        
+                        <!-- Carga de archivo HTML local -->
+                        <div class="mb-3 p-3 bg-light rounded-3 border">
+                            <label class="form-label text-primary fw-bold small mb-1"><i class="bi bi-cloud-upload"></i> Subir Archivo HTML (Opcional)</label>
+                            <input type="file" class="form-control form-control-sm rounded-2" id="acc-file" accept=".html">
+                            <div class="form-text" style="font-size: 0.75rem;">Si subes un archivo desde tu dispositivo, se guardará en la memoria interna de la app automáticamente.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small">Ruta Manual (Si el archivo ya existe en www/)</label>
+                            <input type="text" class="form-control rounded-3" id="acc-ruta" placeholder="Ej. inventario">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small">Icono</label>
+                            <select class="form-select rounded-3" id="acc-icono">
+                                <option value="bi-star-fill">Estrella</option>
+                                <option value="bi-box-seam">Caja / Inventario</option>
+                                <option value="bi-file-earmark-text">Documento</option>
+                                <option value="bi-camera-fill">Cámara / Fotos</option>
+                                <option value="bi-heart-fill">Corazón</option>
+                                <option value="bi-lightning-fill">Rayo</option>
+                                <option value="bi-gear-fill">Engranaje / Ajustes</option>
+                                <option value="bi-graph-up-arrow">Gráfica / Finanzas</option>
+                            </select>
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input" type="checkbox" id="acc-enbarra">
+                            <label class="form-check-label text-secondary small" for="acc-enbarra">Fijar en barra de navegación inferior (Máx 3)</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-3 py-2 fw-bold">Guardar Acceso</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL DE ACCESO DIRECTO SIMPLE -->
+    <!-- ================================================================= -->
+    <div class="modal fade" id="modalNuevoAccesoSimple" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Nuevo Acceso Directo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-acceso-simple">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small">Nombre del Acceso</label>
+                            <input type="text" class="form-control rounded-3" id="acc-nombre-simple" placeholder="Ej. Mi Web Personal" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small">Icono</label>
+                            <select class="form-select rounded-3" id="acc-icono-simple">
+                                <option value="bi-house-fill">🏠 Casa</option>
+                                <option value="bi-star-fill">⭐ Estrella</option>
+                                <option value="bi-heart-fill">❤️ Corazón</option>
+                                <option value="bi-gear-fill">⚙️ Engranaje</option>
+                                <option value="bi-file-earmark-text">📄 Documento</option>
+                                <option value="bi-camera-fill">📷 Cámara</option>
+                                <option value="bi-envelope-fill">✉️ Email</option>
+                                <option value="bi-phone-fill">📞 Teléfono</option>
+                                <option value="bi-globe">🌐 Sitio Web</option>
+                                <option value="bi-play-fill">▶️ Video</option>
+                                <option value="bi-music-note">🎵 Música</option>
+                                <option value="bi-book-fill">📚 Libro</option>
+                                <option value="bi-cart-fill">🛒 Compras</option>
+                                <option value="bi-bank">🏦 Banco</option>
+                                <option value="bi-cloud-fill">☁️ Nube</option>
+                                <option value="bi-download">⬇️ Descargar</option>
+                                <option value="bi-upload">⬆️ Subir</option>
+                                <option value="bi-search">🔍 Buscar</option>
+                                <option value="bi-trash-fill">🗑️ Papelera</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small">Enlace URL (Local o Web)</label>
+                            <input type="url" class="form-control rounded-3" id="acc-url-simple" placeholder="https://ejemplo.com o pagina-local.html">
+                            <div class="form-text mt-1">
+                                <small>Para enlaces locales: nombre-del-archivo.html | Para enlaces web: https://sitio.com</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small">O subir archivo HTML desde tu dispositivo</label>
+                            <input type="file" class="form-control rounded-3" id="acc-file-simple" accept=".html">
+                            <div class="form-text mt-1">
+                                <small>El archivo se guardará en la app y estará disponible offline</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4" onclick="accessManager.cerrarModal()">
+                                <i class="bi bi-arrow-left me-2"></i>Volver
+                            </button>
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill px-4">
+                                <i class="bi bi-plus-circle me-2"></i>Crear Acceso Directo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL DE CONFIRMACIÓN DE ELIMINACIÓN -->
+    <!-- ================================================================= -->
+    <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold mb-3" id="eliminar-titulo">¿Eliminar Acceso Directo?</h5>
+                    <p class="text-muted mb-4" id="eliminar-mensaje">Esta acción no se puede deshacer. ¿Estás seguro de que quieres eliminar este acceso directo?</p>
+                    
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" onclick="accessManager.cancelarEliminar()">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </button>
+                        <button type="button" class="btn btn-danger rounded-pill px-4" onclick="accessManager.confirmarEliminar()">
+                            <i class="bi bi-trash-fill me-2"></i>Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Database -->
+    <script src="js/api_db.js"></script>
+    <script src="js/html2canvas.min.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/accesos.js"></script>
+
+</body>
+</html>

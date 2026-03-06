@@ -1,0 +1,69 @@
+=========================================================
+
+🍎 GUÍA CON MANZANITAS: ¿CÓMO FUNCIONA EL .ZIP (OTA)? 🍎
+
+Para entender esto, primero debes saber un secreto de tu aplicación:
+Tu app en el celular (el APK) es como una "Caja Fuerte". Adentro de esa caja fuerte vive un navegador web invisible que lee lo que hay en tu carpeta "www".
+
+Cuando quieres cambiar un botón o un color, NO necesitas romper la caja fuerte (compilar un nuevo APK). Solo necesitas cambiar los papeles que están adentro.
+
+Aquí tienes el paso a paso LITERAL de lo que pasa:
+
+PASO 1: ¿QUÉ METO EN EL .ZIP Y SE COMPILA ALGO?
+
+• NO SE COMPILA NADA. Cero. Nada de Java, nada de Gradle, nada de Android.
+• Tú vas a tu computadora, abres tu carpeta "www" y ves tus archivos (index.html, css/main.css, js/api_db.js, etc).
+• Seleccionas todo lo que hay DENTRO de "www", le das clic derecho y los metes en un archivo comprimido llamado "actualizacion_v2.zip".
+• El .zip es literalmente solo un paquete con tus textos e imágenes.
+
+PASO 2: ¿A DÓNDE SUBO ESE .ZIP?
+
+• Abres tu servidor en PythonAnywhere.
+• Vas a la carpeta específica que designaste para las actualizaciones: /home/kenth1977/myDBs/updates
+• Subes tu archivo "actualizacion_v2.zip" ahí.
+• Luego, en tu código de app.py, cambias el número para avisarle al mundo que la versión "2.0.0" ya existe y pones el link hacia ese .zip.
+
+PASO 3: ¿QUÉ PASA EN EL CELULAR CUANDO TOCO EL BOTÓN?
+
+• El celular del usuario se conecta a PythonAnywhere y dice: "¿Hay algo nuevo?".
+• PythonAnywhere responde: "Sí, la versión 2.0.0 está en este link".
+• El plugin mágico de tu app (Capacitor Updater) empieza a descargar el archivo "actualizacion_v2.zip" a través de internet.
+• ¿Dónde lo guarda? Lo guarda en una "zona secreta" de la memoria interna del celular a la que solo tu app tiene acceso. El usuario nunca verá este .zip en su galería ni en sus descargas normales.
+
+PASO 4: ¿SE DESCOMPRIME EL .ZIP?
+
+• ¡SÍ! Automáticamente.
+• Una vez que el .zip termina de bajar, el plugin Capacitor Updater toma ese .zip y lo extrae (lo descomprime) dentro de esa misma memoria secreta del celular.
+• Al descomprimirlo, saca todos los archivos nuevecitos (tu nuevo index.html, tu nuevo CSS, etc.) y los pone en una nueva carpetita interna.
+• Una vez descomprimido, el archivo .zip se borra solo para no ocupar espacio basura en el teléfono.
+
+PASO 5: LA MAGIA DEL CAMBIO (¿CÓMO ACTUALIZA SIN APK?)
+
+• Recuerda que el APK original venía apuntando a la carpeta "www" vieja.
+• El plugin interviene y hace un cambio de rieles (como en los trenes).
+• Le dice a la caja fuerte (tu app): "Oye, a partir de este segundo, IGNORA la carpeta vieja que trajiste de fábrica. De ahora en adelante, quiero que leas todo desde esta NUEVA carpeta secreta que acabo de descomprimir".
+• Este cambio de rieles queda guardado permanentemente en el celular.
+
+PASO 6: EL PARPADEO FINAL
+
+• Para que el navegador invisible lea la nueva carpeta, la app hace un "refresh" (como presionar F5 en la computadora).
+• La pantalla parpadea un segundo en blanco y, al volver a encenderse... ¡PUM! Está cargando tu nuevo index.html con el diseño nuevo.
+• ¡Todo esto pasó en 3 segundos sin que el usuario fuera a la Google Play Store!
+
+=========================================================
+RESUMEN DE MANZANITAS:
+
+Comprimes tus textos (www) en un .zip en tu compu.
+
+Lo subes a la nube en /home/kenth1977/myDBs/updates.
+
+El celular baja el .zip.
+
+El celular descomprime el .zip en una carpeta oculta.
+
+El celular cambia la configuración para leer esa nueva carpeta.
+
+La app se recarga y muestra lo nuevo.
+
+
+comprimir toda la carpeta www y subirla a la ruta kenth1977/myDBs/updates 

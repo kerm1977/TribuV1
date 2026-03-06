@@ -1,0 +1,40 @@
+﻿<!-- ========================================== -->
+    <!-- PERMISOS COMPLETOS - TRIBUPLAY (iOS)       -->
+    <!-- ========================================== -->
+
+    <!-- 1. ALMACENAMIENTO Y ARCHIVOS -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>TribuPlay necesita acceder a tu galerÃ­a para subir fotos de perfil y evidencias de pago.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>TribuPlay necesita permiso para guardar imÃ¡genes e informes generados en tu dispositivo.</string>
+
+    <!-- 2. CÃMARA -->
+    <key>NSCameraUsageDescription</key>
+    <string>TribuPlay necesita usar la cÃ¡mara para tomar fotos de perfil directamente desde la aplicaciÃ³n.</string>
+
+    <!-- 3. BIOMETRÃA (Face ID) -->
+    <!-- Touch ID funciona automÃ¡tico, pero Face ID exige esta lÃ­nea -->
+    <key>NSFaceIDUsageDescription</key>
+    <string>TribuPlay utiliza Face ID para que puedas iniciar sesiÃ³n de forma rÃ¡pida y segura sin escribir tu contraseÃ±a.</string>
+
+    <!-- 4. UBICACIÃ“N / GPS -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>TribuPlay necesita acceder a tu ubicaciÃ³n para mostrarte las rutas de senderismo y mapas cercanos.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>TribuPlay usa tu ubicaciÃ³n en segundo plano para trackear tu ruta de senderismo con la pantalla apagada.</string>
+    
+    <!-- 5. BLUETOOTH -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>TribuPlay utiliza Bluetooth para conectarse a dispositivos o parlantes durante tus rutas.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>TribuPlay necesita interactuar con dispositivos Bluetooth cercanos.</string>
+
+    <!-- 6. AUDIO Y SEGUNDO PLANO -->
+    <!-- Esto le dice a Apple que la app sigue trabajando cuando se minimiza -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+        <string>location</string>
+        <string>fetch</string>
+    </array>
+
